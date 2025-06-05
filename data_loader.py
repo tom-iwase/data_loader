@@ -190,7 +190,7 @@ class DataLoader:
             return None
 
         #Overwriting confirmation
-        if self.path.exists() & (overwriting==False):
+        if self.path.exists() and not overwriting:
             self.add_log(f'[info] save() : {self.key} {self.datetime_string} data : file exists and overwriting is False')
             return None
 
@@ -222,10 +222,10 @@ class DataLoader:
 
         #Download the unexsist file if "dl" is True  
         if not self.path.exists():
-            if dl==True:
-                if self.dl()==True:
-                    pass
-            return None
+            if dl and self.dl():
+                pass
+            else:
+                return None
 
         #Check file size
         try:
@@ -246,13 +246,13 @@ class DataLoader:
     def save(self, overwriting=False):
 
         #Confirm overwriting
-        if self.path.exists() & (overwriting==False):
+        if self.path.exists() and not overwriting:
             self.add_log(f'[log] save() : {self.key} {self.datetime_string} data : file exists and overwriting is False')
             return None
 
         #Prepare parent directoris
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        pd.DataFrame(self.data).to_csv(**{'path_or_buf': self.path, 'header': False, 'index': False})
+        pd.DataFrame(self.content).to_csv(**{'path_or_buf': self.path, 'header': False, 'index': False})
 
         self.add_log(f'[log] save() : save {self.key} {self.datetime_string} data : saved')
 
